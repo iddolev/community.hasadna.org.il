@@ -25,6 +25,7 @@ class Migration(SchemaMigration):
             ('hebrew_name', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('biography', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('github_username', self.gf('django.db.models.fields.CharField')(max_length=32, unique=True, null=True, blank=True)),
+            ('github_id', self.gf('django.db.models.fields.IntegerField')(unique=True, null=True, blank=True)),
         ))
         db.send_create_signal(u'users', ['User'])
 
@@ -86,6 +87,7 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '255', 'db_index': 'True'}),
             'email_privacy': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
             'english_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'github_id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'github_username': ('django.db.models.fields.CharField', [], {'max_length': '32', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             'hebrew_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
