@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+      <li class="active">{%  trans "Users" %}</li>
+{% endblock %}
+
+{% block simplecontent %}
+    <ul class="list-group">
+        {% for object in object_list %}
+            <li class="list-group-item">
+                <a href="{{ object.get_absolute_url }}">{{ object }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

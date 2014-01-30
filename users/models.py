@@ -1,6 +1,7 @@
 import re
 from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import models
 from authtools.models import AbstractEmailUser
@@ -77,6 +78,11 @@ class User(AbstractEmailUser):
             raise ValidationError("Nick already in use")
         return super(User, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('users:detail', kwargs={'slug': self.nick})
+
+    def __unicode__(self):
+        return self.get_full_name()
 
     class Meta:
         ordering = ['nick']

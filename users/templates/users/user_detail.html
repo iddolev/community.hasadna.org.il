@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+      <li><a href="{%  url "users:list" %}">{%  trans "Users" %}</a></li>
+      <li class="active">{{ object }}</li>
+{% endblock %}
+
+{% block simplecontent %}
+    {{ object }}
+{% endblock %}
