@@ -1,0 +1,80 @@
+import re
+from django.contrib.auth.models import BaseUserManager
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.db import models
+from authtools.models import AbstractEmailUser
+from django.utils.translation import ugettext_lazy as _
+
+NICK_PATTERN = r"[a-zA-Z][a-zA-Z0-9_]{3,15}"
+NICK_RE = re.compile(NICK_PATTERN)
+
+
+class UserManager(BaseUserManager):
+    def create_user(self, nick, email, password=None, **kwargs):
+        email = self.normalize_email(email)
+        user = self.model(nick=nick, email=email, **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, **kwargs):
+        user = self.create_user(**kwargs)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+
+class PrivacyLevel(object):
+    PUBLIC = 1
+    COMMUNITY = 2
+    PRIVATE = 3
+
+    choices = (
+        (PUBLIC, _('Public (All viewers)')),
+        (COMMUNITY, _('Community members only')),
+        (PRIVATE, _('Site administrators only')),
+    )
+
+
+class User(AbstractEmailUser):
+    nick = models.CharField(_('nick'), max_length=255, unique=True, validators=[RegexValidator(NICK_RE)])
+    privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices, default=PrivacyLevel.PUBLIC)
+    email_privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices,
+                                        default=PrivacyLevel.COMMUNITY)
+
+    english_name = models.CharField(_('name in English'), max_length=255, blank=True, null=True)
+    hebrew_name = models.CharField(_('name in Hebrew'), max_length=255, blank=True, null=True)
+
+    biography = models.TextField(null=True, blank=True)
+
+    github_username = models.CharField(_('github username'), max_length=32, unique=True, null=True, blank=True)
+
+    objects = UserManager()
+
+    REQUIRED_FIELDS = [
+        'nick',
+        'privacy',
+    ]
+
+    def get_full_name(self):
+        return self.english_name if self.english_name else self.nick
+
+    def get_short_name(self):
+        return self.nick
+
+
+    def save(self, *args, **kwargs):
+        qs = User.objects.filter(nick__iexact=self.nick)
+        if self.id:
+            qs = qs.exclude(id=self.id)
+        if qs.exists():
+            raise ValidationError("Nick already in use")
+        return super(User, self).save(*args, **kwargs)
+
+
+    class Meta:
+        ordering = ['nick']
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
