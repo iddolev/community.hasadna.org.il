@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 
 NICK_PATTERN = r"[a-zA-Z][a-zA-Z0-9_]{3,15}"
 NICK_RE = re.compile(NICK_PATTERN)
+NICK_HELPTEXT = _("Nicks must start with an English letter, and contain at least 4 letters, numbers or "
+                  "underscores, and may not be longer than 16 characters")
 
 
 class UserManager(BaseUserManager):
@@ -39,7 +41,9 @@ class PrivacyLevel(object):
 
 
 class User(AbstractEmailUser):
-    nick = models.CharField(_('nick'), max_length=255, unique=True, validators=[RegexValidator(NICK_RE)])
+    nick = models.CharField(_('nick'), max_length=255, unique=True, validators=[
+        RegexValidator(NICK_RE)
+    ], help_text=NICK_HELPTEXT)
     privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices, default=PrivacyLevel.PUBLIC)
     email_privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices,
                                         default=PrivacyLevel.COMMUNITY)
