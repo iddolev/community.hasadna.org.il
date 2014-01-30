@@ -1,3 +1,4 @@
+import hashlib
 import re
 from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import ValidationError
@@ -68,6 +69,9 @@ class User(AbstractEmailUser):
 
     def get_short_name(self):
         return self.nick
+
+    def gravatar_url(self):
+        return "http://www.gravatar.com/avatar/{}?d=blank".format(hashlib.md5(self.email.lower()).hexdigest())
 
 
     def save(self, *args, **kwargs):

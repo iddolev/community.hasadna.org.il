@@ -9,7 +9,10 @@
     <ul class="list-group">
         {% for object in object_list %}
             <li class="list-group-item">
-                <a href="{{ object.get_absolute_url }}">{{ object }}</a>
+                <a href="{{ object.get_absolute_url }}">
+                    <img src="{{ object.gravatar_url }}&s=20"/>
+                    {{ object }}
+                </a>
             </li>
         {% endfor %}
     </ul>
