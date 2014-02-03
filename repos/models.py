@@ -2,8 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 class Repo(models.Model):
-    github_repo_id = models.IntegerField(_('Github repo id'),unique=True, null=False, blank=False)
-    full_name = models.CharField(_('Repo full name'), max_length=255, blank=True)
+    full_name = models.CharField(_('Repo full name'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Repo description from github'), blank=True)
     last_fetch = models.DateTimeField(_('Last time commits were fetched'), auto_now=True, blank=False)
 
