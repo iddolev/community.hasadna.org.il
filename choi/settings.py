@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'authtools',
     'core',
     'users',
+    'repos',
 )
 
 MIDDLEWARE_CLASSES = (

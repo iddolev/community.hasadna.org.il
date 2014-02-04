@@ -1,6 +1,5 @@
 from repos.models import Repo, Commit, CommitParent, CommitRepo
 from users.models import User
-from pygithub3 import Github
 from django.utils.timezone import make_aware, utc
 
 class GithubCrawler():
