@@ -55,8 +55,7 @@ class User(AbstractEmailUser):
 
     biography = models.TextField(null=True, blank=True)
 
-    github_username = models.CharField(_('github username'), max_length=32, unique=True, null=True, blank=True)
-    github_id = models.IntegerField(_('github id'),unique=True, null=True, blank=True)
+    github_username = models.CharField(_('github username'), max_length=255, unique=True, null=True, blank=True)
 
     objects = UserManager()
 

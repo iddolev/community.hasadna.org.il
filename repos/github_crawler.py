@@ -25,18 +25,16 @@ class GithubCrawler():
 
     def process_repo_commit_pair(self, repo, commit_from_api):
         # add the commit if it does not exist
-        author = get_user_by_github_id_or_none(commit_from_api.author.id)
-        committer = get_user_by_github_id_or_none(commit_from_api.committer.id)
+        author = get_user_by_github_username_or_none(commit_from_api.commit.author.name)
+        committer = get_user_by_github_username_or_none(commit_from_api.commit.committer.name)
 
         commit, created = Commit.objects.get_or_create(
-            author_github_id = commit_from_api.author.id,
             author_url = commit_from_api.author.url,
-            author_name = commit_from_api.commit.author.name,
+            author_github_username = commit_from_api.commit.author.name,
             author_email = commit_from_api.commit.author.email,
             author_date = make_aware(commit_from_api.commit.author.date, utc),
-            committer_github_id = commit_from_api.committer.id,
             committer_url = commit_from_api.committer.url,
-            committer_name = commit_from_api.commit.committer.name,
+            committer_github_username = commit_from_api.commit.committer.name,
             committer_email = commit_from_api.commit.committer.email,
             committer_date = make_aware(commit_from_api.commit.committer.date, utc),
             sha = commit_from_api.sha,
@@ -62,8 +60,8 @@ class GithubCrawler():
             except Commit.ObjectDoesNotExist:
                 pass
 
-def get_user_by_github_id_or_none(github_id):
-        cut = User.objects.filter(github_id=github_id)
+def get_user_by_github_username_or_none(github_username):
+        cut = User.objects.filter(github_username=github_username)
         if len(cut)!=1:
             return None
         else:

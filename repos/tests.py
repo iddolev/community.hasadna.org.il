@@ -3,7 +3,7 @@ from django.test import TestCase
 from users.models import User
 from repos.models import Repo, Commit, CommitParent, CommitRepo
 from django.utils import timezone
-from github_crawler import GithubCrawler, get_user_by_github_id_or_none
+from github_crawler import GithubCrawler, get_user_by_github_username_or_none
 from pygithub3 import Github
 from mock_github import MockGithub, MockCommit
 
@@ -20,10 +20,10 @@ class NoGit(TestCase):
     def test_create_commit_no_user(self):
         self.assertEquals(0,Commit.objects.count())
         c = Commit.objects.create(
-            author_github_id=1,
-            author_date = timezone.now(),
-            committer_github_id = 2,
-            committer_date = timezone.now(),
+            author_github_username='foo',
+            author_date=timezone.now(),
+            committer_github_username = 'bar',
+            committer_date=timezone.now(),
             sha='xxx',
             message='best commit ever!'
         )
@@ -34,10 +34,10 @@ class NoGit(TestCase):
         self.assertEquals(0,Commit.objects.count())
         c = Commit.objects.create(
             author=u,
-            author_github_id=1,
+            author_github_username='foo',
             author_date = timezone.now(),
             committer=u,
-            committer_github_id = 2,
+            committer_github_username = 'foo',
             committer_date = timezone.now(),
             sha='xxx',
             message='best commit ever!'
@@ -49,10 +49,10 @@ class NoGit(TestCase):
         r = Repo.objects.create(full_name='foo/bar', description='baz')
         c1 = Commit.objects.create(
             author=u,
-            author_github_id=1,
+            author_github_username='foo',
             author_date = timezone.now(),
             committer=u,
-            committer_github_id = 1,
+            committer_github_username = 'foo',
             committer_date = timezone.now(),
             sha='xxx',
             message='best commit ever!'
@@ -63,10 +63,10 @@ class NoGit(TestCase):
 
         c2 = Commit.objects.create(
             author=u,
-            author_github_id=1,
+            author_github_username='foo',
             author_date = timezone.now(),
             committer=u,
-            committer_github_id = 1,
+            committer_github_username = 'foo',
             committer_date = timezone.now(),
             sha='yyy',
             message='Even better commit!'
@@ -84,33 +84,33 @@ class NoGit(TestCase):
         self.assertEquals(c2, c1.parents.all()[0].parent)
 
     def test_match_author_to_user(self):
-        u = User.objects.create_user('foo', 'foo@gmail.com', 'secret',github_id=1)
-        known_github_id = 1
-        unknown_github_id = 2
+        u = User.objects.create_user('foo', 'foo@gmail.com', 'secret',github_username='foo')
+        known_github_username = 'foo'
+        unknown_github_username = 'bar'
 
-        matched_author = get_user_by_github_id_or_none(known_github_id)
-        matched_committer = get_user_by_github_id_or_none(known_github_id)
+        matched_author = get_user_by_github_username_or_none(known_github_username)
+        matched_committer = get_user_by_github_username_or_none(known_github_username)
 
         matched_commit = Commit.objects.create(
             author=matched_author,
-            author_github_id=1,
+            author_github_username='foo',
             author_date=timezone.now(),
             committer=matched_committer,
-            committer_github_id = 1,
+            committer_github_username='foo',
             committer_date=timezone.now(),
             sha='xxx',
             message='best commit ever!'
         )
 
-        unmatched_author = get_user_by_github_id_or_none(unknown_github_id)
-        unmatched_committer = get_user_by_github_id_or_none(unknown_github_id)
+        unmatched_author = get_user_by_github_username_or_none(unknown_github_username)
+        unmatched_committer = get_user_by_github_username_or_none(unknown_github_username)
 
         matched_commit = Commit.objects.create(
             author=unmatched_author,
-            author_github_id=1,
+            author_github_username='foo',
             author_date=timezone.now(),
             committer=unmatched_committer,
-            committer_github_id=1,
+            committer_github_username='foo',
             committer_date=timezone.now(),
             sha='xxx',
             message='best commit ever!'
@@ -151,18 +151,40 @@ class WithGithub(TestCase):
         self.assertEquals(commits[1], commits[0].children.all()[0].child)
         self.assertEquals(commits[0], commits[1].parents.all()[0].parent)
 
+    def test_user_matching(self):
+        github = Github(login='', password='')
+        ghc = GithubCrawler(github)
+        repo_full_name = 'omridor/TestForCommunity'
+        r = Repo.objects.create(full_name=repo_full_name, description='blablabla')
+        u = User.objects.create_user(nick='foo', email='foo@gmail.com', password='secret', github_username='omridor')
+
+        #run the script to import all commits
+        ghc.process_all_repos()
+
+        # retrieve the only repo
+        self.assertEquals(1, len(Repo.objects.all()))
+        r = Repo.objects.all()[0]
+        self.assertEquals(repo_full_name, r.full_name)
+
+        # get omri's commits
+        commits = [commitRepo.commit for commitRepo in r.commits.filter(commit__author_github_username='omridor')]
+        self.assertLess(0, len(commits))
+
+        #check that they point to omri's user
+        for commit in commits:
+            self.assertTrue(commit.author == u)
 
 class MockGitHub(TestCase):
     def test_mock_seperation(self):
         gh = MockGithub()
-        gh.add_mock_commit('user1','repo1',MockCommit(sha='xxx',author_id=1))
-        gh.add_mock_commit('user1','repo2',MockCommit(sha='yyy',author_id=1))
-        gh.add_mock_commit('user2','repo1',MockCommit(sha='zzz',author_id=1))
-        gh.add_mock_commit('user2','repo2',MockCommit(sha='www',author_id=1))
+        gh.add_mock_commit('user1','repo1',MockCommit(sha='xxx',author_username='foo'))
+        gh.add_mock_commit('user1','repo2',MockCommit(sha='yyy',author_username='foo'))
+        gh.add_mock_commit('user2','repo1',MockCommit(sha='zzz',author_username='foo'))
+        gh.add_mock_commit('user2','repo2',MockCommit(sha='www',author_username='foo'))
 
-        gh.add_mock_commit('user1','repo1',MockCommit(sha='aaa',author_id=1))
-        gh.add_mock_commit('user1','repo1',MockCommit(sha='bbb',author_id=1))
-        gh.add_mock_commit('user1','repo1',MockCommit(sha='ccc',author_id=1))
+        gh.add_mock_commit('user1','repo1',MockCommit(sha='aaa',author_username='foo'))
+        gh.add_mock_commit('user1','repo1',MockCommit(sha='bbb',author_username='foo'))
+        gh.add_mock_commit('user1','repo1',MockCommit(sha='ccc',author_username='foo'))
 
         self.assertEquals(4, len(gh.repos.commits.list('user1','repo1')))
         self.assertEquals(1, len(gh.repos.commits.list('user1','repo2')))
@@ -172,16 +194,16 @@ class MockGitHub(TestCase):
     def test_fetch_commits_from_repo(self):
         github = MockGithub()
         ghc = GithubCrawler(github)
-        github.add_mock_commit('user1','repo1',MockCommit(sha='xxx',author_id=1))
+        github.add_mock_commit('user1','repo1',MockCommit(sha='xxx',author_username='foo'))
         commits = ghc.fetch_commits_from_repo('user1/repo1')
 
     def test_process_all_repos(self):
         github = MockGithub()
         github.add_mock_commit('user1','repo1',MockCommit(sha='bbb',
-                                                          author_id=1))
+                                                          author_username='foo'))
         github.add_mock_commit('user1','repo1',MockCommit(sha='aaa',
                                                           parent_shas=['bbb'],
-                                                          author_id=1))
+                                                          author_username='foo'))
 
         ghc = GithubCrawler(github)
         repo_full_name = 'user1/repo1'
@@ -208,3 +230,4 @@ class MockGitHub(TestCase):
 
         self.assertEquals(commits[1], commits[0].children.all()[0].child)
         self.assertEquals(commits[0], commits[1].parents.all()[0].parent)
+
