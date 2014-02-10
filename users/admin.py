@@ -16,7 +16,7 @@ class UserAdmin(BasicUserAdmin):
                 ('english_name', 'hebrew_name',),
                 ('email_privacy',),
                 ('biography',),
-                ('github_username', 'github_id')
+                ('github_username',)
             ),
         }),
 
