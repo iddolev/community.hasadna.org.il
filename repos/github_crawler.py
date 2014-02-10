@@ -1,6 +1,7 @@
 from repos.models import Repo, Commit, CommitParent, CommitRepo
 from users.models import User
 from django.utils.timezone import make_aware, utc
+from django.core.exceptions import ObjectDoesNotExist
 
 class GithubCrawler():
     def __init__(self, github):
@@ -25,24 +26,30 @@ class GithubCrawler():
 
     def process_repo_commit_pair(self, repo, commit_from_api):
         # add the commit if it does not exist
-        author = get_user_by_github_username_or_none(commit_from_api.commit.author.name)
-        committer = get_user_by_github_username_or_none(commit_from_api.commit.committer.name)
+        author_github_username = commit_from_api.author.login
+        committer_github_username = commit_from_api.committer.login
+        author = get_user_by_github_username_or_none(author_github_username)
+        committer = get_user_by_github_username_or_none(committer_github_username)
 
-        commit, created = Commit.objects.get_or_create(
-            author_url = commit_from_api.author.url,
-            author_github_username = commit_from_api.commit.author.name,
-            author_email = commit_from_api.commit.author.email,
-            author_date = make_aware(commit_from_api.commit.author.date, utc),
-            committer_url = commit_from_api.committer.url,
-            committer_github_username = commit_from_api.commit.committer.name,
-            committer_email = commit_from_api.commit.committer.email,
-            committer_date = make_aware(commit_from_api.commit.committer.date, utc),
-            sha = commit_from_api.sha,
-            url = commit_from_api.url,
-            message = commit_from_api.commit.message,
-            author = author,
-            committer = committer,
-        )
+        commit, created = Commit.objects.get_or_create(sha=commit_from_api.sha,
+                                                       author_date=make_aware(commit_from_api.commit.author.date,
+                                                                              utc),
+                                                       committer_date=make_aware(commit_from_api.commit.committer.date,
+                                                                                 utc))
+        commit.author_github_username = author_github_username
+        commit.author_url = commit_from_api.author.url
+        commit.author_name = commit_from_api.commit.author.name
+        commit.author_email = commit_from_api.commit.author.email
+        commit.committer_url = commit_from_api.committer.url
+        commit.committer_github_username = committer_github_username
+        commit.committer_name = commit_from_api.commit.committer.name
+        commit.committer_email = commit_from_api.commit.committer.email
+        commit.sha = commit_from_api.sha
+        commit.url = commit_from_api.url
+        commit.message = commit_from_api.commit.message
+        commit.author = author
+        commit.committer = committer
+        commit.save()
 
         # map this commit to this repo
         CommitRepo.objects.get_or_create(commit=commit,repo=repo)
@@ -57,7 +64,7 @@ class GithubCrawler():
                 child = Commit.objects.get(sha=child_sha)
                 parent = Commit.objects.get(sha=parent_sha)
                 CommitParent.objects.get_or_create(child=child,parent=parent)
-            except Commit.ObjectDoesNotExist:
+            except ObjectDoesNotExist:
                 pass
 
 def get_user_by_github_username_or_none(github_username):

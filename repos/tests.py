@@ -169,10 +169,12 @@ class WithGithub(TestCase):
         # get omri's commits
         commits = [commitRepo.commit for commitRepo in r.commits.filter(commit__author_github_username='omridor')]
         self.assertLess(0, len(commits))
+        print commits[0].author_github_username
 
         #check that they point to omri's user
         for commit in commits:
             self.assertTrue(commit.author == u)
+            self.assertIn(commit,u.authored_commits.all())
 
 class MockGitHub(TestCase):
     def test_mock_seperation(self):

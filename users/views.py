@@ -7,6 +7,7 @@ class HomeView(ListView):
     # TODO: show users according to privacy level
     model = User
 
+
 class UserView(DetailView):
     # TODO: show users according to privacy level
     model = User

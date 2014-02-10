@@ -2,10 +2,64 @@
 {% load i18n %}
 
 {% block breadcrumbs %}
-      <li><a href="{%  url "users:list" %}">{%  trans "Users" %}</a></li>
-      <li class="active">{{ object }}</li>
+<li><a href="{%  url "users:list" %}">{%  trans "Users" %}</a></li>
+<li class="active">{{ object.nick }}</li>
 {% endblock %}
 
 {% block simplecontent %}
-    <img src="{{ object.gravatar_url }}&s=120"/> {{ object }}
+<div class="container">
+    <div class="well" id="myModal" tabindex="-1" aria-labelledby="myModalLabel">
+        <div class="modal-content">
+            <!--
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <div class="row">
+                    <div class="col-md-6"><h4 class="modal-title" id="myModalLabel">{{ object.english_name }}</h4>
+                    </div>
+                    <div class="col-md-6 text-right"><h4 class="modal-title" id="myModalLabel">{{ object.hebrew_name }}</h4>
+                    </div>
+                </div>
+            </div>
+            -->
+            <div class="modal-body">
+                <center>
+                    <img src="{{ object.gravatar_url }}?s=140" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
+                    <h3 class="media-heading">{{ object.nick }}</h3>
+                    <h3 class="media-heading"><small>{{ object.hebrew_name }} | {{ object.english_name }}</small></h3>
+                    <span><strong>Skills: </strong></span>
+                    <span class="label label-warning">HTML5/CSS</span>
+                    <span class="label label-info">Adobe CS 5.5</span>
+                    <span class="label label-info">Microsoft Office</span>
+                    <span class="label label-success">Windows XP, Vista, 7</span>
+                </center>
+                <hr>
+                <p class="text-left"><strong>Email: </strong><br>
+                    <a href="mailto:{{object.email}}"> {{object.email }}</a></p>
+                <hr>
+                <center>
+                    <p class="text-left"><strong>Bio: </strong><br>
+                        {{object.biography }}</p>
+                </center>
+
+                {% if object.github_username and object.authored_commits.all|length > 0 %}
+                    <hr>
+                    <p class="text-left"><strong>Code Contributions: </strong></p>
+                    <ul class="list-group">
+                    {%for commit in object.authored_commits.all %}
+                        <li class="list-group-item">{{commit.message}}</li>
+                    {%endfor%}
+                    </ul>
+                {% endif %}
+            </div>
+            <!--
+            <div class="modal-footer">
+                <center>
+                <button type="button" class="btn btn-default" data-dismiss="modal">I've heard enough about Joe</button>
+                </center>
+            </div>
+            -->
+        </div>
+    </div>
+</div>
+</div>
 {% endblock %}

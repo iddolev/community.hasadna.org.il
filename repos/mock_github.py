@@ -41,9 +41,11 @@ class MockCommit:
                  sha,
                  parent_shas=[],
                  author_username='foo',
+                 author_name='Foo',
                  author_url='x',
                  author_email='x',
                  committer_username='foo',
+                 committer_name='Foo',
                  committer_url='x',
                  committer_email='x',
                  url='x',
@@ -52,13 +54,15 @@ class MockCommit:
                  committer_date=datetime.utcnow(),
                  ):
         author = Object()
+        author.login = author_username
+        author.name = author_name
         author.url = author_url
-        author.name = author_username
         author.email = author_email
         author.date = author_date
 
         committer = Object()
-        committer.name = committer_username
+        committer.login = committer_username
+        committer.name = committer_name
         committer.url = committer_url
         committer.email = committer_email
         committer.date = committer_date

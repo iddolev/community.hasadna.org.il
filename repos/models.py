@@ -8,6 +8,7 @@ class Repo(models.Model):
 
 class Commit(models.Model):
     author_github_username = models.CharField(_('Github username of author'),max_length=255, null=False, blank=False)
+    author_name = models.CharField(_('Name of author according to github'),max_length=255, null=True, blank=True)
     author_url = models.CharField(_('Author Github page URL'), max_length=255, blank=True)
     author_email = models.CharField(_('Author email'), max_length=255, blank=True)
     author_date = models.DateTimeField(_('Author date'), blank=False)
@@ -17,6 +18,7 @@ class Commit(models.Model):
                                   null=True,
                                   on_delete=models.SET_NULL)
     committer_github_username = models.CharField(_('Github username of committer'),max_length=255,null=False, blank=False)
+    committer_name = models.CharField(_('Name of committer according to github'),max_length=255, null=True, blank=True)
     committer_url = models.CharField(_('Author Github page URL'), max_length=255, blank=True)
     committer_email = models.CharField(_('Committer email'), max_length=255, blank=True)
     committer_date = models.DateTimeField(_('Committer date'), blank=False)
