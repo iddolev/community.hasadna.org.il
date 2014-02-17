@@ -1,0 +1,9 @@
+{% extends "users/user_form.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <li><a href="{%  url "users:list" %}">{%  trans "Users" %}</a></li>
+    <li class="active">{% trans "New User" %}</li>
+{% endblock %}
+
+{% block form_action %}{% url 'users:user_create' %}{% endblock %}

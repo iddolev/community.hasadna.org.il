@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from users.models import User
-
+from forms import EditUserForm
 
 class HomeView(ListView):
     # TODO: show users according to privacy level
@@ -31,3 +31,17 @@ class UserView(DetailView):
         context['repo_user_commits'] = repo_user_commits
 
         return context
+
+
+class UserCreateView(CreateView):
+    model = User
+    form_class = EditUserForm
+    template_name_suffix = '_create_form'
+
+class UserUpdateView(UpdateView):
+    model = User
+    form_class = EditUserForm
+    slug_field = 'nick'
+    template_name_suffix = '_update_form'
+    def get_success_url(self):
+        return self.object.get_absolute_url()

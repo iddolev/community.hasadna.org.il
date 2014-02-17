@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block simplecontent %}
+    <ul class="list-group">
+        <form action="{% block form_action %}{% endblock %}" method="post">{% csrf_token %}
+            {{ form.as_ul }}
+        <input type="submit" value="Submit" />
+        </form>
+    </ul>
+{% endblock %}

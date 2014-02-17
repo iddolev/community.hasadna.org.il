@@ -10,7 +10,12 @@
 <div class="well">
     <center>
         <img src="{{ object.gravatar_url }}?s=140" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
-        <h3 class="media-heading">{{ object.nick }}</h3>
+        <h3 class="media-heading">
+            {{ object.nick }}
+            {% if user == object %}
+              (<a href="{% url 'users:user_update' object.nick %}">Edit Profile</a>)
+            {% endif %}
+        </h3>
         <h3 class="media-heading"><small>{{ object.hebrew_name }} | {{ object.english_name }}</small></h3>
         <span><strong>Skills: </strong></span>
         <span class="label label-warning">HTML5/CSS</span>

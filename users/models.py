@@ -47,7 +47,7 @@ class User(AbstractEmailUser):
         RegexValidator(NICK_RE)
     ], help_text=NICK_HELPTEXT)
     privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices, default=PrivacyLevel.PUBLIC)
-    email_privacy = models.IntegerField(_('profile viewable by'), choices=PrivacyLevel.choices,
+    email_privacy = models.IntegerField(_('email viewable by'), choices=PrivacyLevel.choices,
                                         default=PrivacyLevel.COMMUNITY)
 
     english_name = models.CharField(_('name in English'), max_length=255, blank=True, null=True)

@@ -1,0 +1,9 @@
+{% extends "users/user_form.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <li><a href="{%  url "users:list" %}">{%  trans "Users" %}</a></li>
+    <li class="active"><a href="{{ object.get_absolute_url }}">{{ object.nick }}</a></li>
+{% endblock %}
+
+{% block form_action %}{% url 'users:user_update' object.nick %}{% endblock %}
