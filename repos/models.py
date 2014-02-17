@@ -1,23 +1,29 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 
 class Project(models.Model):
     english_name = models.CharField(_('Project Name (English)'), unique=True, max_length=255, blank=True)
     hebrew_name = models.CharField(_('Project Name (Hebrew)'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Project Description'), blank=True)
+
     def __unicode__(self):
         return self.english_name
 
+    def get_absolute_url(self):
+        return reverse('repos:project_detail', kwargs={'pk': self.pk})
+
 
 class Repo(models.Model):
-    full_name = models.CharField(_('Repo full name'), unique=True, max_length=255, blank=True)
+    full_name = models.CharField(_('Repo full name ("username/repo_name")'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Repo description from github'), blank=True)
     last_fetch = models.DateTimeField(_('Last time commits were fetched'), auto_now=True, blank=False)
     project = models.ForeignKey('repos.Project',
                                   related_name='repos',
                                   blank=False,
                                   null=False)
+
 
 class Commit(models.Model):
     author_github_username = models.CharField(_('Github username of author'),max_length=255, null=False, blank=False)

@@ -1,0 +1,9 @@
+{% extends "users/user_form.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<li><a href="{%  url "repos:list" %}">{%  trans "Projects" %}</a></li>
+<li class="active">{{ object.english_name }}</li>
+{% endblock %}
+
+{% block form_action %}{% url 'repos:project_update' object.pk %}{% endblock %}

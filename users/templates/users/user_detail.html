@@ -31,7 +31,6 @@
         <p class="text-left"><strong>Bio: </strong><br>
             {{object.biography }}</p>
     </center>
-
     {% if object.github_username and object.authored_commits.all|length > 0 %}
     <hr>
     <p class="text-left"><strong>Code Contributions: </strong></p>
@@ -83,7 +82,6 @@
                                     </div>
                                     {% endif %}
                                     {% endfor %}
-
                                 </div>
                             </div>
                         </div>

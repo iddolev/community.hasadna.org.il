@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<li><a href="{%  url "repos:list" %}">{%  trans "Projects" %}</a></li>
+<li class="active">{{ object.english_name }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="well">
+    <center>
+        <h3 class="media-heading">{{ object.hebrew_name }} | {{ object.english_name }}</h3>
+        (<a href="{% url 'repos:project_update' object.pk %}">Edit</a>)
+
+    </center>
+    <hr>
+    <p class="text-left"><strong>Description: </strong><br>
+        {{object.description}}
+    </p>
+    {% if object.repos and object.repos.all|length > 0 %}
+    <hr>
+    <p class="text-left"><strong>Repositories and number of commits: </strong></p>
+
+    {% for repo, commits in repo_commits.items %}
+    {% if not repo == 'total_commits' %}
+    <div class="panel-group" id="repo-accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#" href="#collapseRepo{{forloop.counter}}">
+                        {{repo.full_name}}: {{ commits | length}}
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseRepo{{forloop.parentloop.counter}}{{forloop.counter}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {%for commit in commits %}
+                        <li class="list-group-item">{{commit.message}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="panel-group" id="repo-accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#" href="#add-repo">
+                        {% trans "+ Connect a new repository to this project" %}
+                    </a>
+                </h4>
+            </div>
+            <div id="add-repo" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form action="{% url 'repos:add_repo' object.pk %}" method="post">
+                                {% csrf_token %}
+                                <div class="fieldWrapper">
+                                    {{ repo_form.full_name.label_tag }}
+                                    <div class="input-group">
+                                        <input id="{{repo_form.full_name.id_for_label}}" name="{{repo_form.full_name.html_name}}" maxlength="{{ repo_form.full_name.field.max_length }}" type="text" class="form-control">
+                                          <span class="input-group-btn">
+                                            <input class="btn btn-default" type="submit" value="{% trans 'Add Repo' %}"></submit>
+                                          </span>
+                                    </div><!-- /input-group -->
+                                </div>
+                            </form>
+                        </div><!-- /.col-lg-6 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}

@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'users',
     'repos',
     'cachebuster',
+    'floppyforms',
 )
 
 MIDDLEWARE_CLASSES = (
