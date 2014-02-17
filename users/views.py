@@ -18,18 +18,25 @@ class UserView(DetailView):
         commits = self.object.authored_commits.all()
         context['total_commits'] = len(commits)
 
-        repo_user_commits = dict()
+        repo_commits = dict()
         for commit in commits:
             commit_repos = commit.repos.all()
             for commit_repo in commit_repos:
                 repo = commit_repo.repo
-                if not repo_user_commits.has_key(repo):
-                    repo_user_commits[repo]=list()
-                repo_user_commits[repo].append(commit)
+                if not repo_commits.has_key(repo):
+                    repo_commits[repo]=list()
+                repo_commits[repo].append(commit)
 
+        project_repo_commits = dict()
+        for repo, commits in repo_commits.items():
+            project = repo.project
+            if not project_repo_commits.has_key(project):
+                project_repo_commits[project] = dict()
+                project_repo_commits[project]['total_commits']= 0
+            project_repo_commits[project][repo]=commits
+            project_repo_commits[project]['total_commits'] += len(commits)
 
-        context['repo_user_commits'] = repo_user_commits
-
+        context['project_repo_commits'] = project_repo_commits
         return context
 
 

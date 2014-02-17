@@ -13,7 +13,7 @@
         <h3 class="media-heading">
             {{ object.nick }}
             {% if user == object %}
-              (<a href="{% url 'users:user_update' object.nick %}">Edit Profile</a>)
+            (<a href="{% url 'users:user_update' object.nick %}">Edit Profile</a>)
             {% endif %}
         </h3>
         <h3 class="media-heading"><small>{{ object.hebrew_name }} | {{ object.english_name }}</small></h3>
@@ -36,38 +36,65 @@
     <hr>
     <p class="text-left"><strong>Code Contributions: </strong></p>
 
-                    <ul class="list-group">
-                        <li class="list-group-item"><strong>Total Commits:</strong> {{total_commits}}</li>
-                    </ul>
-
-
-    <div class="panel-group" id="accordion">
-        {% for repo, commits in repo_user_commits.items %}
+    <div class="panel-group" id="all-accordion">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}">
-                        {{repo.full_name}}: {{commits | length}}
+                    <a data-toggle="collapse" data-parent="" href="#collapseAll">
+                        <strong>Total Commits:</strong> {{total_commits}}
                     </a>
                 </h4>
             </div>
-            <div id="collapse{{forloop.counter}}" class="panel-collapse collapse">
+            <div id="collapseAll" class="panel-collapse collapse">
                 <div class="panel-body">
-                    <ul class="list-group">
-                        {%for commit in commits %}
-                        <li class="list-group-item">{{commit.message}}</li>
-                        {%endfor%}
-                    </ul>
+                    {% for project, repo_commits in project_repo_commits.items %}
+                    <div class="panel-group" id="project-accordion{{forloop.counter}}">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="" href="#collapseProject{{forloop.counter}}">
+                                        {{project.english_name}}: {{ repo_commits.total_commits}}
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseProject{{forloop.counter}}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    {% for repo, commits in repo_commits.items %}
+                                    {% if not repo == 'total_commits' %}
+                                    <div class="panel-group" id="repo-accordion">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#" href="#collapseRepo{{forloop.parentloop.counter}}{{forloop.counter}}">
+                                                        {{repo.full_name}}: {{ commits | length}}
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseRepo{{forloop.parentloop.counter}}{{forloop.counter}}" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <ul class="list-group">
+                                                        {%for commit in commits %}
+                                                        <li class="list-group-item">{{commit.message}}</li>
+                                                        {%endfor%}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% endfor %}
 
     </div>
-
     {% endif %}
 </div>
-
-
-
 {% endblock %}
