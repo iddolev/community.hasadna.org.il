@@ -1,5 +1,5 @@
 from users.models import User
-import floppyforms as forms
+from django import forms
 
 
 class EditUserForm(forms.ModelForm):
