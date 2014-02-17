@@ -30,12 +30,32 @@
     {% if object.github_username and object.authored_commits.all|length > 0 %}
     <hr>
     <p class="text-left"><strong>Code Contributions: </strong></p>
-    <ul class="list-group">
-        <li class="list-group-item"><strong>Total Commits:</strong> {{total_commits}}</li>
-        {%for commit in object.authored_commits.all %}
-        <li class="list-group-item">{{commit.message}}</li>
-        {%endfor%}
-    </ul>
+
+    <div class="panel-group" id="accordion">
+        {% for repo, commits in repo_user_commits.items %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        {{repo.full_name}}: {{commits | length}}
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Total Commits:</strong> {{total_commits}}</li>
+                        {%for commit in commits %}
+                        <li class="list-group-item">{{commit.message}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
     {% endif %}
 </div>
 

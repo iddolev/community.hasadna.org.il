@@ -7,3 +7,4 @@ South==0.8.4
 django-authtools==0.2.1
 
 #django-allauth==0.15.0
+django-cachebuster==0.2.1
