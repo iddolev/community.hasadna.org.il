@@ -24,7 +24,7 @@
     {% for repo, commits in repo_commits.items %}
     {% if not repo == 'total_commits' %}
     <div class="panel-group" id="repo-accordion">
-        <div class="panel panel-default">
+        <div class="panel panel-info">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#" href="#collapseRepo{{forloop.counter}}">
@@ -47,7 +47,7 @@
     {% endfor %}
 
     <div class="panel-group" id="repo-accordion">
-        <div class="panel panel-default">
+        <div class="panel panel-warning">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#" href="#add-repo">

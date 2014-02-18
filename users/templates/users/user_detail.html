@@ -36,7 +36,7 @@
     <p class="text-left"><strong>Code Contributions: </strong></p>
 
     <div class="panel-group" id="all-accordion">
-        <div class="panel panel-default">
+        <div class="panel panel-success">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="" href="#collapseAll">
@@ -44,11 +44,11 @@
                     </a>
                 </h4>
             </div>
-            <div id="collapseAll" class="panel-collapse collapse">
+            <div id="collapseAll" class="panel-collapse collapse in">
                 <div class="panel-body">
                     {% for project, repo_commits in project_repo_commits.items %}
                     <div class="panel-group" id="project-accordion{{forloop.counter}}">
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="" href="#collapseProject{{forloop.counter}}">
@@ -61,7 +61,7 @@
                                     {% for repo, commits in repo_commits.items %}
                                     {% if not repo == 'total_commits' %}
                                     <div class="panel-group" id="repo-accordion">
-                                        <div class="panel panel-default">
+                                        <div class="panel panel-warning">
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#" href="#collapseRepo{{forloop.parentloop.counter}}{{forloop.counter}}">
