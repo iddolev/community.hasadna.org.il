@@ -11,4 +11,6 @@ urlpatterns = patterns('',
     url(r'^create$', views.ProjectCreateView.as_view(), name="project_create"),
     url(r'^(?P<pk>\d+)/edit$', views.ProjectUpdateView.as_view(), name="project_update"),
     url(r'^(?P<pk>\d+)/add_repo$', views.add_repo, name="add_repo"),
+    url(r'^remove_repo$', views.remove_repo, name="remove_repo"),
+
 )

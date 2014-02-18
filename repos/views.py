@@ -1,5 +1,5 @@
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
-from repos.models import Project
+from repos.models import Project, Repo
 from forms import EditProjectForm, AddRepoToProject
 from django.http import HttpResponseRedirect
 
@@ -45,3 +45,12 @@ def add_repo(request, pk):
             project = Project.objects.get(pk=pk)
             repo = project.repos.get_or_create(full_name=repo_name, project=project)
             return HttpResponseRedirect(project.get_absolute_url()) # Redirect after POST
+
+
+def remove_repo(request):
+    if request.method == 'POST':
+        repo_pk = request.POST['repo']
+        repo = Repo.objects.get(pk=repo_pk)
+        project = repo.project
+        repo.delete()
+        return HttpResponseRedirect(project.get_absolute_url()) # Redirect after POST
