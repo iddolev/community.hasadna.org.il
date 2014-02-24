@@ -15,6 +15,16 @@ class Project(models.Model):
         return reverse('repos:project_detail', kwargs={'pk': self.pk})
 
 
+class ProjectOwner(models.Model):
+    owner = models.ForeignKey('users.User',
+                              related_name='projects',
+                              blank=False,
+                              null=False)
+    project = models.ForeignKey('repos.Project',
+                                related_name='owners',
+                                blank=False,
+                                null=False)
+
 class Repo(models.Model):
     full_name = models.CharField(_('Repo full name ("username/repo_name")'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Repo description from github'), blank=True)

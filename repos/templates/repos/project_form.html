@@ -28,6 +28,7 @@
         {%endfor%}
     </ul>
     {% endif %}
+    {% if object.pk %}
     <div class="panel-group" id="repo-accordion">
         <div class="panel panel-warning">
             <div class="panel-heading">
@@ -59,6 +60,53 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+        {% if object.repos and object.repos.all|length > 0 %}
+    <hr>
+    <p class="text-left"><strong>Owners: </strong></p>
+
+    <ul class="list-group">
+        {% for owner in owners %}
+        <li class="list-group-item">
+                <form role="inline-form" action="{% url 'repos:remove_owner' object.pk%}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="owner" value="{{owner.pk}}"/>
+                    <button class="btn btn-link pull-right" type="submit" onclick="return confirm('{% trans 'Are you sure you want to remove this owner?' %}')"><span class="glyphicon glyphicon-remove"/></button>
+                </form>
+                <a href="{{owner.get_absolute_url}}">{{owner.nick}} ({{ owner.english_name }})</a>
+        </li>
+        {%endfor%}
+    </ul>
+    {% endif %}
+    {% if object.pk %}
+    <div class="panel-group" id="repo-accordion">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#" href="#add-owner">
+                        {% trans "+ Add a new owner to this project" %}
+                    </a>
+                </h4>
+            </div>
+            <div id="add-owner" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form action="{% url 'repos:add_owner' object.pk %}" method="post">
+                                {% csrf_token %}
+                                    {{ owner_form.as_p }}
+                                            <input class="btn btn-default" type="submit" onclick="return confirm('{% trans 'Are you sure you want to add this owner?' %}')" value="{% trans 'Add Owner' %}"></submit>
+                            </form>
+                        </div><!-- /.col-lg-6 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
 </div>
 
 {% endblock %}
