@@ -2,6 +2,7 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from repos.models import Project, Repo
 from forms import EditProjectForm, AddRepoToProject
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 class HomeView(ListView):
     model = Project
@@ -33,8 +34,16 @@ class ProjectUpdateView(UpdateView):
     model = Project
     form_class = EditProjectForm
     template_name_suffix = '_update_form'
+
     def get_success_url(self):
         return self.object.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectUpdateView, self).get_context_data(**kwargs)
+        repos = self.object.repos.all()
+        context['repos'] = repos
+        context['repo_form'] = AddRepoToProject(self.object.pk, self.request.POST)
+        return context
 
 
 def add_repo(request, pk):
@@ -44,7 +53,7 @@ def add_repo(request, pk):
             repo_name = form.cleaned_data['full_name']
             project = Project.objects.get(pk=pk)
             repo = project.repos.get_or_create(full_name=repo_name, project=project)
-            return HttpResponseRedirect(project.get_absolute_url()) # Redirect after POST
+            return HttpResponseRedirect(reverse('repos:project_update',kwargs={'pk': project.pk})) # Redirect after POST
 
 
 def remove_repo(request):
@@ -53,4 +62,4 @@ def remove_repo(request):
         repo = Repo.objects.get(pk=repo_pk)
         project = repo.project
         repo.delete()
-        return HttpResponseRedirect(project.get_absolute_url()) # Redirect after POST
+        return HttpResponseRedirect(reverse('repos:project_update',kwargs={'pk': project.pk})) # Redirect after POST
