@@ -53,9 +53,17 @@ class User(AbstractEmailUser):
     english_name = models.CharField(_('name in English'), max_length=255, blank=True, null=True)
     hebrew_name = models.CharField(_('name in Hebrew'), max_length=255, blank=True, null=True)
 
+    phone_number = models.CharField(_('phone number'), max_length=255, blank=True, null=True)
+    phone_privacy = models.IntegerField(_('phone number viewable by'), choices=PrivacyLevel.choices,
+                                        default=PrivacyLevel.COMMUNITY)
+
     biography = models.TextField(null=True, blank=True)
 
     github_username = models.CharField(_('github username'), max_length=255, unique=True, null=True, blank=True)
+
+    facebook_username = models.CharField(_('facebook username'), max_length=255, unique=True, null=True, blank=True)
+    facebook_privacy = models.IntegerField(_('facebook number viewable by'), choices=PrivacyLevel.choices,
+                                        default=PrivacyLevel.COMMUNITY)
 
     objects = UserManager()
 

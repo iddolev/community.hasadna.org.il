@@ -4,5 +4,8 @@ import floppyforms as forms
 class EditUserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'password','nick','privacy','email_privacy',
-                  'english_name','hebrew_name','biography','github_username']
+        fields = ['privacy','password','nick',
+                  'english_name','hebrew_name','email','email_privacy',
+                  'phone_number','phone_privacy',
+                  'facebook_username','facebook_privacy',
+                  'biography','github_username']
