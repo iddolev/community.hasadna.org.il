@@ -8,4 +8,4 @@ class EditUserForm(forms.ModelForm):
                   'english_name','hebrew_name','email','email_privacy',
                   'phone_number','phone_privacy',
                   'facebook_username','facebook_privacy',
-                  'biography','github_username']
+                  'biography','github_username','skills']

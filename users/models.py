@@ -42,6 +42,14 @@ class PrivacyLevel(object):
     )
 
 
+class UserSkill(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    slug = models.CharField(max_length=200, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class User(AbstractEmailUser):
     nick = models.CharField(_('nick'), max_length=255, unique=True, validators=[
         RegexValidator(NICK_RE)
@@ -64,6 +72,9 @@ class User(AbstractEmailUser):
     facebook_username = models.CharField(_('facebook username'), max_length=255, unique=True, null=True, blank=True)
     facebook_privacy = models.IntegerField(_('facebook number viewable by'), choices=PrivacyLevel.choices,
                                         default=PrivacyLevel.COMMUNITY)
+    
+    skills = models.ManyToManyField(UserSkill, related_name="users", blank=True)
+    
 
     objects = UserManager()
 
@@ -100,3 +111,5 @@ class User(AbstractEmailUser):
         ordering = ['nick']
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+

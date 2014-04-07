@@ -1,6 +1,7 @@
 from django.contrib import admin
 from authtools.admin import UserAdmin as BasicUserAdmin, BASE_FIELDS, ADVANCED_PERMISSION_FIELDS, DATE_FIELDS
 from users.models import User
+from users.models import UserSkill
 
 
 class UserAdmin(BasicUserAdmin):
@@ -24,5 +25,9 @@ class UserAdmin(BasicUserAdmin):
         DATE_FIELDS,
     )
 
+class UserSkillAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug")
+
 
 admin.site.register(User, UserAdmin)
+admin.site.register(UserSkill, UserSkillAdmin)
