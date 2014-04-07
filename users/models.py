@@ -49,6 +49,9 @@ class UserSkill(models.Model):
     def __unicode__(self):
         return self.name
 
+    def count_users(self):
+        return User.objects.filter(skills = self).count()
+
 
 class User(AbstractEmailUser):
     nick = models.CharField(_('nick'), max_length=255, unique=True, validators=[
@@ -91,6 +94,10 @@ class User(AbstractEmailUser):
 
     def gravatar_url(self):
         return "http://www.gravatar.com/avatar/{}?d=blank".format(hashlib.md5(self.email.lower()).hexdigest())
+
+    @staticmethod
+    def filter_by_skill(skill):
+        return User.objects.filter(skills=skill)
 
 
     def save(self, *args, **kwargs):

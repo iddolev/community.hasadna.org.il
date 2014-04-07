@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<li><a href="{%  url "skills" %}">{% trans "Skills" %}</a></li>
+<li class="active">{{ skill.name }}</li>
+{% endblock %}
+
+{% block simplecontent %}
+    <h4>{% trans "Users who know" %} {{ skill.name }}</h4>
+    <ul class="list-group">
+        {% for user in user_list %}
+            <li class="list-group-item">
+                      <a href="/users/{{user.nick}}">
+                          {{user}}
+                      </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

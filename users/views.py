@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
-from users.models import User
+from django.shortcuts import render, get_object_or_404
+from users.models import User, UserSkill
 from forms import EditUserForm
 
 class HomeView(ListView):
@@ -52,3 +53,19 @@ class UserUpdateView(UpdateView):
     template_name_suffix = '_update_form'
     def get_success_url(self):
         return self.object.get_absolute_url()
+    
+ 
+def skills(request):
+    skillList = UserSkill.objects.all()
+
+    return render(request, 'skills/skills.html', {
+                            'skill_list': skillList,
+                            })
+
+def skill_by_slug(request, pk):
+    skill=get_object_or_404(UserSkill, slug=pk)
+    userList = User.filter_by_skill(skill)
+    return render(request, 'skills/skill_users.html', {
+                            'user_list': userList,
+                            'skill': skill,
+                            })
