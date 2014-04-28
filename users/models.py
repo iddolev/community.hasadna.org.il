@@ -7,6 +7,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from authtools.models import AbstractEmailUser
 from django.utils.translation import ugettext_lazy as _
+from repos.models import Project
 
 NICK_PATTERN = r"[a-zA-Z][a-zA-Z0-9_]{3,15}"
 NICK_RE = re.compile(NICK_PATTERN)

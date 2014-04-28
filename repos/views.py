@@ -44,14 +44,12 @@ class ProjectUpdateView(UpdateView):
         repos = self.object.repos.all()
         context['repos'] = repos
         context['repo_form'] = AddRepoToProject(self.request.POST)
-        ownerships = self.object.owners.all()
-        owners = [ownership.owner for ownership in ownerships]
-        context['owners'] = owners
+        context['owner'] = self.object.owner
         context['owner_form'] = AddOwnerToProject(self.request.POST)
         return context
 
 
-def add_repo(request, project):
+def add_repo(request, pk):
     if request.method == 'POST': # If the form has been submitted...
         form = AddRepoToProject(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass

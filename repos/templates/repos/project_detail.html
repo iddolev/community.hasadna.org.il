@@ -10,6 +10,11 @@
 <div class="well">
     <center>
         <h3 class="media-heading">{{ object.hebrew_name }} | {{ object.english_name }}</h3>
+        <strong>Owner:</strong> 
+        {% if object.owner %}
+        <a href="{% url 'users:detail' object.owner.nick %}">{{ object.owner }}</a>
+        {% endif %}
+        <br>
         (<a href="{% url 'repos:project_update' object.pk %}">Edit</a>)
 
     </center>
@@ -27,6 +32,9 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h4 class="panel-title">
+                	<a href="http://github.com/hasadna/{{repo.full_name}}" target="_blank">
+   	               	<span class="glyphicon glyphicon-link"></span>
+   	               	</a>
                     <a data-toggle="collapse" data-parent="#" href="#collapseRepo{{forloop.counter}}">
                         {{repo.full_name}}: {{ commits | length}}
                     </a>

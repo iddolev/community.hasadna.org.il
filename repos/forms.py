@@ -1,4 +1,4 @@
-from repos.models import Project, Repo, ProjectOwner
+from repos.models import Project, Repo
 from users.models import User
 import floppyforms as forms
 

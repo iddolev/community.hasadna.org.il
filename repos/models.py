@@ -7,6 +7,10 @@ class Project(models.Model):
     english_name = models.CharField(_('Project Name (English)'), unique=True, max_length=255, blank=True)
     hebrew_name = models.CharField(_('Project Name (Hebrew)'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Project Description'), blank=True)
+    owner = models.ForeignKey('users.User',
+                              related_name='projects',
+                              blank=True,
+                              null=True)
 
     def __unicode__(self):
         return self.english_name
@@ -14,17 +18,7 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('repos:project_detail', kwargs={'pk': self.pk})
 
-
-class ProjectOwner(models.Model):
-    owner = models.ForeignKey('users.User',
-                              related_name='projects',
-                              blank=False,
-                              null=False)
-    project = models.ForeignKey('repos.Project',
-                                related_name='owners',
-                                blank=False,
-                                null=False)
-
+# Repo = GitHub Repo. Each Hasadna Project may have one or more repos.
 class Repo(models.Model):
     full_name = models.CharField(_('Repo full name ("username/repo_name")'), unique=True, max_length=255, blank=True)
     description = models.TextField(_('Repo description from github'), blank=True)
@@ -33,7 +27,6 @@ class Repo(models.Model):
                                   related_name='repos',
                                   blank=False,
                                   null=False)
-
 
 class Commit(models.Model):
     author_github_username = models.CharField(_('Github username of author'),max_length=255, null=False, blank=False)

@@ -12,9 +12,6 @@
         <img src="{{ object.gravatar_url }}?s=140" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
         <h3 class="media-heading">
             {{ object.nick }}
-            {% if user == object %}
-            (<a href="{% url 'users:user_update' object.nick %}">Edit Profile</a>)
-            {% endif %}
         </h3>
         <h3 class="media-heading"><small>{{ object.hebrew_name }} | {{ object.english_name }}</small></h3>
         <span><strong>Skills: </strong></span>
@@ -25,15 +22,33 @@
         </span>
         </a> &nbsp;
         {% endfor %}
+        {% if user == object %}
+          <br><small>(<a href="{% url 'users:user_update' object.nick %}">edit profile</a>)</small>
+        {% endif %}
     </center>
     <hr>
     <p class="text-left"><strong>Email: </strong><br>
         <a href="mailto:{{object.email}}"> {{object.email }}</a></p>
+        
     <hr>
-    <center>
         <p class="text-left"><strong>Bio: </strong><br>
             {{object.biography }}</p>
-    </center>
+
+    <hr>
+        <p class="text-left"><strong>Projects: </strong><br>
+        	<ul>
+        		{% for project in object.projects.all %}
+        		<li><a href="{% url 'repos:project_detail' project.id %}">{{project}}</a></li>
+        		{% endfor %}
+        	</ul>
+        </p>
+    
+    {% if object.github_username %}
+    <hr>
+        <p class="text-left"><strong>Github: </strong><br>
+            User's Github page: <a href="http://github.com/{{ object.github_username }}" target="_blank">http://github.com/{{ object.github_username }}</a></p>
+    {% endif %}
+    
     {% if object.github_username and object.authored_commits.all|length > 0 %}
     <hr>
     <p class="text-left"><strong>Code Contributions: </strong></p>
